@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, View ,ScrollView, Platform,Image} from 'react-native'
+import { StyleSheet, View ,ScrollView, Platform,Image,Modal} from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Title ,SubTitle,TextField,RoundedBorderButton,DatePiker,TimePiker,RadioBtn,Checkbox,SubmitButton,DropDown,Loader} from '../Components/Utils';
 import Colors from '../Components/Color';
@@ -84,30 +84,30 @@ export default function BookingForm(props) {
         setIsDatePiker(true);
      }
     function onChangeDate(event,selectedDate){
-        setIsDatePiker(Platform.OS === 'ios')
-        if(event['type']=='set'){
+        setIsDatePiker(false)
+        
             setSelectedDate(selectedDate);
             const tempdate=new Date(selectedDate);
             var date = tempdate.getDate();
             var month = tempdate.getMonth() + 1;
             var year = tempdate.getFullYear();
             setDate(year + '-' + month + '-' + date);
-        }
+        
         
     }
     function openTimePiker(){
         setIsTimePiker(true);
      }
     function onChangeTime(event,selectedTime){
-        setIsTimePiker(Platform.OS === 'ios')
-        if(event['type']=='set'){
+        setIsTimePiker(false)
+    
             setSelectedTime(selectedTime);
         
             const temptime=new Date(selectedTime);
             var hours = temptime.getHours();
             var min = temptime.getMinutes();
             setTime(hours + ':' + min );
-        }
+        
         
     }
     const options = {
@@ -284,12 +284,27 @@ export default function BookingForm(props) {
                iconname="calendar-day"
                fn={openDatePiker}
             />
-            {isDatePiker && (
-                <DatePiker
-                    fn={onChangeDate}
-                    value={selectedDate}
-                />
-            )}
+            {Platform.OS=='android' ?
+            <View>
+                {isDatePiker &&(
+                        <DatePiker
+                            fn={onChangeDate}
+                            value={selectedDate}
+                        />
+                )}
+            </View>:
+           <Modal
+           style={{alignItems:'center',justifyContent:'center',height:Orientation.height/2}}
+           transparent={true}
+           animationType='fade'
+           visible={isDatePiker}
+            onRequestClose={()=>setIsDatePiker(false)}>
+                    <DatePiker
+                            fn={onChangeDate}
+                            value={selectedDate}
+                        />
+               </Modal>}
+            
 
              <SubTitle
                subtitle="Pick Up Time:"
@@ -301,12 +316,27 @@ export default function BookingForm(props) {
                iconname="clock"
                fn={openTimePiker}
             />
-            {isTimePiker && (
-                <TimePiker
+            {Platform.OS=='android' ?
+            <View>
+                {isTimePiker &&(
+                        <TimePiker
+                        fn={onChangeTime}
+                        value={selectedTime}
+                    />
+                )}
+            </View>:
+           <Modal
+           style={{alignItems:'center',justifyContent:'center',height:Orientation.height/2}}
+           transparent={true}
+           animationType='fade'
+           visible={isTimePiker}
+            onRequestClose={()=>setIsTimePiker(false)}>
+                   <TimePiker
                     fn={onChangeTime}
                     value={selectedTime}
                 />
-            )}
+               </Modal>}
+    
              <SubTitle
                subtitle="ID Type:"
             />
